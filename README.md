@@ -1,4 +1,6 @@
-# TEIR
+<p align="center">
+  <img src="static/IMG/TEIR.png" alt="TEIR" width="800">
+</p>
 
 **Plataforma de vinculación entre empresas y talento SENA.**
 
