@@ -4,18 +4,18 @@ Guía completa para ejecutar el proyecto TEIR usando Docker.
 
 ---
 
-## 📋 Requisitos Previos
+## Requisitos Previos
 
 | Herramienta | Versión Mínima | Verificar |
 |-------------|---------------|-----------|
 | **Docker** | 20.10+ | `docker --version` |
 | **Docker Compose** | 2.0+ | `docker compose version` |
 
-> 💡 Si estás en Windows, instala [Docker Desktop](https://www.docker.com/products/docker-desktop/).
+> Si estás en Windows, instala [Docker Desktop](https://www.docker.com/products/docker-desktop/).
 
 ---
 
-## 🚀 Inicio Rápido
+##  Inicio Rápido
 
 ### 1. Configurar variables de entorno
 
@@ -50,7 +50,7 @@ Abre tu navegador en: **http://localhost**
 
 ---
 
-## 📖 Estructura de Archivos Docker
+##  Estructura de Archivos Docker
 
 ```
 TEIR/
@@ -67,7 +67,7 @@ TEIR/
 
 ---
 
-## 🛠️ Comandos Útiles
+##  Comandos Útiles
 
 ### Gestión de Servicios
 
@@ -134,7 +134,7 @@ docker compose restart db
 
 ---
 
-## 🌐 Puertos
+## Puertos
 
 | Servicio | Puerto Host | Puerto Contenedor | Descripción |
 |----------|------------|-------------------|-------------|
@@ -142,11 +142,11 @@ docker compose restart db
 | MySQL | **3307** | 3306 | Acceso externo a BD (Workbench, DBeaver) |
 | Gunicorn | — | 8000 | Solo accesible internamente |
 
-> 💡 MySQL usa el puerto **3307** en el host para no conflictar con una instalación local de MySQL (3306).
+> MySQL usa el puerto **3307** en el host para no conflictar con una instalación local de MySQL (3306).
 
 ---
 
-## ⚙️ Arquitectura
+## Arquitectura
 
 ```
 ┌─────────────────────────────────────────────────────┐
@@ -168,7 +168,7 @@ docker compose restart db
 
 ---
 
-## 🔧 Solución de Problemas
+## Solución de Problemas
 
 ### El contenedor web se reinicia continuamente
 
@@ -221,14 +221,3 @@ docker compose restart nginx
 ```
 
 ---
-
-## 🔒 Seguridad para Producción
-
-Antes de desplegar a producción, asegúrate de:
-
-1. ✅ Cambiar `DJANGO_SECRET_KEY` por una clave segura única
-2. ✅ Establecer `DJANGO_DEBUG=False`
-3. ✅ Cambiar las contraseñas de MySQL (`DB_PASSWORD`, `MYSQL_ROOT_PASSWORD`)
-4. ✅ Configurar `DJANGO_ALLOWED_HOSTS` con tu dominio real
-5. ✅ Configurar HTTPS/SSL en Nginx (usar Certbot o similar)
-6. ✅ Configurar un servicio de email real para producción
