@@ -1,0 +1,103 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TEIR | Editar Proyecto</title>
+  <link rel="shortcut icon" href="{% static 'IMG/Logo.jpg' %}" type="image/x-icon">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="{% static 'dashboard/css/dashboard.css' %}">
+  <link rel="stylesheet" href="{% static 'dashboard/css/finalizar.css' %}">
+</head>
+<body>
+<div class="app-layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <img src="{% static 'IMG/Logo.jpg' %}" alt="TEIR">
+      <div>
+        <div class="sidebar-brand-text">TEIR</div>
+        <div class="sidebar-brand-sub">Editar Proyecto</div>
+      </div>
+    </div>
+    <div class="sidebar-group" style="padding-top:20px;">
+      <a class="nav-item" href="{% url 'dashboard_empresa' %}">
+        <i class="fa fa-arrow-left"></i><span>Volver al Panel</span>
+      </a>
+    </div>
+  </aside>
+
+  <div class="main-wrapper">
+    <header class="top-header">
+      <div class="top-header-title">Editar Proyecto <span>/ Requerimientos</span></div>
+    </header>
+    <main class="main-content" style="display:flex; justify-content:center;">
+      <div style="max-width:580px; width:100%;">
+
+        <div class="page-header">
+          <div>
+            <div class="page-title"><i class="fa fa-pen-to-square" style="margin-right:10px; color:var(--primary);"></i>{{ proyecto.titulo }}</div>
+            <div class="page-subtitle">Modifica los requerimientos mientras el proyecto esté publicado</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <form method="post" style="display:flex; flex-direction:column; gap:20px;">
+            {% csrf_token %}
+
+            <div class="form-group">
+              <label class="form-label"><i class="fa fa-heading" style="margin-right:6px;"></i>Título</label>
+              <input type="text" name="titulo" value="{{ proyecto.titulo }}" required style="width:100%; padding:10px 14px; border:1px solid var(--border); border-radius:var(--radius-sm); font-size:13.5px; color:var(--text-primary); background:var(--card-bg); outline:none;">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label"><i class="fa fa-align-left" style="margin-right:6px;"></i>Descripción</label>
+              <textarea name="descripcion" required placeholder="Describe el proyecto..." style="width:100%; min-height:130px; padding:10px 14px; border:1px solid var(--border); border-radius:var(--radius-sm); font-size:13.5px; color:var(--text-primary); background:var(--card-bg); font-family:inherit; resize:vertical; outline:none;">{{ proyecto.descripcion }}</textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label"><i class="fa fa-cubes" style="margin-right:6px;"></i>Tipo de Solución</label>
+              <select name="tipo_solucion" required style="width:100%; padding:10px 14px; border:1px solid var(--border); border-radius:var(--radius-sm); font-size:13.5px; color:var(--text-primary); background:var(--card-bg); outline:none;">
+                <option value="sitio_web" {% if proyecto.tipo_solucion == 'sitio_web' %}selected{% endif %}>Sitio Web</option>
+                <option value="aplicacion_movil" {% if proyecto.tipo_solucion == 'aplicacion_movil' %}selected{% endif %}>Aplicación Móvil</option>
+                <option value="automatizacion" {% if proyecto.tipo_solucion == 'automatizacion' %}selected{% endif %}>Automatización</option>
+                <option value="sistema_escritorio" {% if proyecto.tipo_solucion == 'sistema_escritorio' %}selected{% endif %}>Sistema de Escritorio</option>
+                <option value="otro" {% if proyecto.tipo_solucion == 'otro' %}selected{% endif %}>Otro</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label"><i class="fa fa-signal" style="margin-right:6px;"></i>Prioridad</label>
+              <select name="prioridad" required style="width:100%; padding:10px 14px; border:1px solid var(--border); border-radius:var(--radius-sm); font-size:13.5px; color:var(--text-primary); background:var(--card-bg); outline:none;">
+                <option value="alta" {% if proyecto.prioridad == 'alta' %}selected{% endif %}>Alta</option>
+                <option value="media" {% if proyecto.prioridad == 'media' %}selected{% endif %}>Media</option>
+                <option value="baja" {% if proyecto.prioridad == 'baja' %}selected{% endif %}>Baja</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label"><i class="fa fa-users" style="margin-right:6px;"></i>Vacantes</label>
+              <input type="number" name="vacantes" value="{{ proyecto.vacantes }}" min="1" required style="width:100%; padding:10px 14px; border:1px solid var(--border); border-radius:var(--radius-sm); font-size:13.5px; color:var(--text-primary); background:var(--card-bg); outline:none;">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label"><i class="fa fa-calendar" style="margin-right:6px;"></i>Fecha Límite</label>
+              <input type="date" name="fecha_limite" value="{{ proyecto.fecha_limite|date:'Y-m-d'|default_if_none:'' }}" style="width:100%; padding:10px 14px; border:1px solid var(--border); border-radius:var(--radius-sm); font-size:13.5px; color:var(--text-primary); background:var(--card-bg); outline:none;">
+            </div>
+
+            <div style="border-top:1px solid var(--border); padding-top:20px; display:flex; gap:12px;">
+              <a href="{% url 'dashboard_empresa' %}" class="btn btn-secondary" style="flex:1; justify-content:center;">Cancelar</a>
+              <button type="submit" class="btn btn-primary" style="flex:2; justify-content:center;">
+                <i class="fa fa-floppy-disk"></i> Guardar Cambios
+              </button>
+            </div>
+          </form>
+        </div>
+
+      </div>
+    </main>
+  </div>
+</div>
+</body>
+</html>

@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST, require_http_methods
 from django.contrib import messages
 from django.db import transaction
 from django.db.models import Avg, Q, Count, Prefetch, Value, FloatField, F
@@ -366,6 +366,50 @@ def eliminar_hito(request, hito_id):
     else:
         messages.error(request, "No se puede eliminar un hito que ya ha sido completado.")
     return redirect('gestionar_hitos', proyecto_id=proyecto_id)
+
+@login_required
+@require_http_methods(["GET", "POST"])
+def editar_proyecto(request, proyecto_id):
+    if request.user.rol != 'empresa':
+        messages.error(request, "Solo las empresas pueden editar proyectos.")
+        return redirect('dashboard_empresa')
+
+    proyecto = get_object_or_404(Proyecto, id=proyecto_id, empresa=request.user)
+
+    if proyecto.estado != 'publicado':
+        messages.error(request, "Solo puedes editar un proyecto en estado publicado.")
+        return redirect('dashboard_empresa')
+
+    if Contratacion.objects.filter(proyecto=proyecto, estado='activa').exists():
+        messages.error(request, "No puedes modificar un proyecto con contratos activos. Finalízalo o retíralo primero.")
+        return redirect('gestionar_hitos', proyecto_id=proyecto.id)
+
+    if request.method == 'POST':
+        try:
+            vacantes = int(request.POST.get('vacantes', 1))
+        except (ValueError, TypeError):
+            vacantes = 0
+
+        if vacantes < 1:
+            messages.error(request, "Las vacantes deben ser un número mayor o igual a 1.")
+            return redirect('editar_proyecto', proyecto_id=proyecto.id)
+
+        try:
+            proyecto.titulo = request.POST.get('titulo')
+            proyecto.descripcion = request.POST.get('descripcion')
+            proyecto.tipo_solucion = request.POST.get('tipo_solucion')
+            proyecto.prioridad = request.POST.get('prioridad', 'media')
+            proyecto.vacantes = vacantes
+            proyecto.fecha_limite = request.POST.get('fecha_limite') or None
+            proyecto.save()
+
+            messages.success(request, f"Proyecto '{proyecto.titulo}' actualizado exitosamente.")
+            return redirect('dashboard_empresa')
+        except Exception as e:
+            messages.error(request, f"Error: {e}")
+            return redirect('editar_proyecto', proyecto_id=proyecto.id)
+
+    return render(request, 'proyectos/editar_proyecto.html', {'proyecto': proyecto})
 
 @login_required
 @require_POST
