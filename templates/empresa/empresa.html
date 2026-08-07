@@ -261,6 +261,9 @@
                 <a href="{% url 'ver_postulaciones_empresa' proyecto.id %}" class="btn btn-primary btn-sm" style="flex:1;justify-content:center;">
                   <i class="fa fa-users"></i> Ver Candidatos
                 </a>
+                <a href="{% url 'editar_proyecto' proyecto.id %}" class="btn btn-secondary btn-sm" style="flex:1;justify-content:center;">
+                  <i class="fa fa-pen-to-square"></i> Editar
+                </a>
                 <a href="{% url 'desactivar_proyecto' proyecto.id %}" class="btn btn-secondary btn-sm" style="flex:1;justify-content:center;color:var(--danger);">
                   <i class="fa fa-ban"></i> Retirar
                 </a>
