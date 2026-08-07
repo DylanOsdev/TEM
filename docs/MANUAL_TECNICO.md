@@ -121,7 +121,7 @@ Proyecto:
     titulo, descripcion, tipo_solucion(choices), prioridad(choices)
     vacantes: PositiveIntegerField
     estado: CharField(choices=[
-        pendiente_aprobacion, publicado, en_desarrollo,
+        publicado, en_desarrollo,
         en_revision, finalizado, rechazado, inactivo
     ])
     fecha_publicacion: auto_now_add
@@ -722,7 +722,6 @@ publicado → (primera contratación) → en_desarrollo
 ```
 
 **Estados intermedios:**
-- `pendiente_aprobacion`: proyecto creado pero no publicado (no usado actualmente)
 - `rechazado`: proyecto rechazado por admin (no usado actualmente)
 - `inactivo`: proyecto desactivado por la empresa
 

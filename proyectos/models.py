@@ -17,7 +17,6 @@ class Proyecto(models.Model):
         ('baja', 'Baja'),
     ]
     ESTADO = [
-        ('pendiente_aprobacion', 'Pendiente de Aprobación'),
         ('publicado', 'Publicado'),
         ('en_desarrollo', 'En Desarrollo'),
         ('en_revision', 'En Revisión'),

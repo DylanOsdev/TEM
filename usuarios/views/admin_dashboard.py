@@ -33,7 +33,6 @@ def dashboard_admin(request):
         p_pub=Count('id', filter=Q(estado='publicado')),
         p_des=Count('id', filter=Q(estado='en_desarrollo')),
         p_fin=Count('id', filter=Q(estado='finalizado')),
-        p_pen=Count('id', filter=Q(estado='pendiente_aprobacion')),
     )
     post_pen = Postulacion.objects.filter(estado='pendiente').count()
     promedio_global = Valoracion.objects.aggregate(avg=Avg('puntuacion'))['avg'] or 0
@@ -46,8 +45,7 @@ def dashboard_admin(request):
     p_pub = proy_stats['p_pub']
     p_des = proy_stats['p_des']
     p_fin = proy_stats['p_fin']
-    p_pen = proy_stats['p_pen']
-    total_proyectos = p_pub + p_des + p_fin + p_pen
+    total_proyectos = p_pub + p_des + p_fin
     total_usuarios = total_empresas + total_devs
     
     usuarios_lista = Usuario.objects.all().order_by('-date_joined')[:50]
@@ -168,7 +166,7 @@ def dashboard_admin(request):
     context = {
         'total_usuarios': total_usuarios, 'total_proyectos': total_proyectos,
         'total_devs': total_devs, 'total_empresas': total_empresas,
-        'p_pub': p_pub, 'p_des': p_des, 'p_fin': p_fin, 'p_pen': p_pen,
+        'p_pub': p_pub, 'p_des': p_des, 'p_fin': p_fin,
         'post_pen': post_pen, 'promedio_global': promedio_global, 'p_ret': p_ret,
         'usuarios_todos': usuarios_lista, 'proyectos_todos': proyectos_lista,
         'logs_auditoria': logs, 'conversaciones': conversaciones, 
