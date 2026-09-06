@@ -1,0 +1,106 @@
+name: CI
+# Required checks for branch protection on main: test-sqlite, test-mysql (both must pass)
+
+on:
+  push:
+    branches: [main, "feat/**", "ci/**"]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test-sqlite:
+    name: Test (SQLite)
+    runs-on: ubuntu-latest
+    env:
+      DJANGO_SECRET_KEY: test-secret-key-ci
+      DJANGO_DEBUG: "True"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13" # TODO: bump a 3.14 cuando esté GA en setup-python@v5 / ubuntu-latest
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run tests (SQLite, ignore E2E)
+        run: pytest . --ignore=tests/e2e -v
+
+  test-mysql:
+    name: Test (MySQL 8.4)
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: tem_dbv2
+        ports:
+          - "3306:3306"
+        options: '--health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=5'
+    env:
+      DJANGO_SECRET_KEY: test-secret-key-ci
+      DJANGO_DEBUG: "True"
+      DB_ENGINE: mysql
+      DB_HOST: 127.0.0.1
+      DB_PORT: "3306"
+      DB_NAME: tem_dbv2
+      DB_USER: root
+      DB_PASSWORD: root
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13" # TODO: bump a 3.14 cuando esté GA en setup-python@v5 / ubuntu-latest
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Wait for MySQL service
+        run: |
+          for i in {1..30}; do
+            if mysqladmin ping -h 127.0.0.1 -P 3306 -u root -proot --silent 2>/dev/null; then
+              echo "MySQL is ready"
+              exit 0
+            fi
+            echo "Waiting for MySQL... ($i/30)"
+            sleep 2
+          done
+          echo "MySQL did not become ready in time"
+          exit 1
+
+      - name: Run migrations
+        run: python manage.py migrate --noinput
+
+      - name: Run tests with coverage (MySQL, ignore E2E)
+        run: pytest --cov --cov-report=term-missing --cov-report=xml --junitxml=junit.xml --ignore=tests/e2e -v
+
+      - name: Upload coverage and JUnit artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-mysql-artifacts
+          path: |
+            coverage.xml
+            junit.xml
+
+      - name: Upload to Codecov (optional)
+        uses: codecov/codecov-action@v4
+        with:
+          files: coverage.xml
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: false
