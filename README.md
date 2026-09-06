@@ -4,7 +4,8 @@
 
 **Plataforma de vinculación entre empresas y talento SENA.**
 
-[![Tests](https://img.shields.io/badge/tests-117%20passed-brightgreen)](https://github.com/MrDylanDev/TEIR)
+[![CI](https://github.com/MrDylanDev/TEIR/actions/workflows/ci.yml/badge.svg)](https://github.com/MrDylanDev/TEIR/actions/workflows/ci.yml)
+[![Tests](https://img.shields.io/badge/tests-124%20passed-brightgreen)](https://github.com/MrDylanDev/TEIR)
 [![Python](https://img.shields.io/badge/python-3.14-blue)](https://python.org)
 [![Django](https://img.shields.io/badge/django-5.0-092e20)](https://djangoproject.com)
 [![MySQL](https://img.shields.io/badge/mysql-8.0-orange)](https://mysql.com)
@@ -202,7 +203,13 @@ pytest tests/e2e/ -v -m e2e
 pytest -v
 ```
 
-**117 tests** cubriendo todas las apps: usuarios, proyectos, postulaciones, contrataciones, avances, mensajes, favoritos, logs, notificaciones y tests end-to-end con navegador real.
+**124 tests** (111 unit/integration + 13 E2E) cubriendo todas las apps: usuarios, proyectos, postulaciones, contrataciones, avances, mensajes, favoritos, logs, notificaciones y tests end-to-end con navegador real.
+
+---
+
+## Branch protection
+
+Checks requeridos en `main`: `Test (SQLite)` (`test-sqlite`) y `Test (MySQL 8.0)` (`test-mysql`) deben estar en verde antes de merge. Configurar en GitHub → Settings → Branches → Branch protection rules → Require status checks to pass.
 
 ---
 
